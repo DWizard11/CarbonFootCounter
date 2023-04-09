@@ -10,19 +10,37 @@ import SwiftUI
 struct NewLogView: View {
     
     @State var activity = ""
-    @State var typeOfActivity = ""
+    @State var carbonFootprint = Int()
+    @ObservedObject var carbonLogManager: CarbonLogManager
+    @Environment(\.dismiss) var dismiss
     
+    let formatter: NumberFormatter = {
+            let formatter = NumberFormatter()
+            formatter.numberStyle = .decimal
+            return formatter
+        }()
+
     var body: some View {
         VStack {
             TextField("Activity", text: $activity)
                 .font(.headline)
-            TextField("Type of Activity", text: $typeOfActivity)
+                .textFieldStyle(.roundedBorder)
+                .padding()
+            
+            TextField("Type of Activity", value: $carbonFootprint, formatter: formatter)
+                .textFieldStyle(.roundedBorder)
+                .padding()
+                .keyboardType(.decimalPad)
+            
+            Button {
+                dismiss()
+            } label: {
+                Text("Add New Log")
+            }
+            .buttonStyle(.bordered)
+            
         }
     }
 }
 
-struct NewLogView_Previews: PreviewProvider {
-    static var previews: some View {
-        NewLogView()
-    }
-}
+

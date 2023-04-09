@@ -6,7 +6,7 @@ struct ContentView: View {
     
     var body: some View {
         TabView {
-            HomePageView()
+            HomePageView(carbonLogManager: carbonLogManager)
                 .tabItem {
                     Label("Home", systemImage: "house.fill")
                 }

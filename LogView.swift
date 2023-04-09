@@ -9,8 +9,8 @@ import SwiftUI
 
 struct LogView: View {
 
-    @ObservedObject var carbonLogManager: CarbonLogManager
     @Binding var carbonLog: CarbonLog
+    @ObservedObject var carbonLogManager: CarbonLogManager
     
     var log: CarbonLog {
         get {
