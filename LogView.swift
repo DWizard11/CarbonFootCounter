@@ -36,7 +36,10 @@ struct LogView: View {
     }
     
     var body: some View {
-        Text("Activity: \(carbonLog.name)")
+        VStack {
+            Text("Activity: \(carbonLog.name)")
+
+        }
         
     }
 }

@@ -11,7 +11,8 @@ struct NewLogView: View {
     
     @State var activity = ""
     @State var carbonFootprint = Int()
-    @ObservedObject var carbonLogManager: CarbonLogManager
+    @State var isAlertPresent = false
+    @Binding var carbonLogs: [CarbonLog]
     @Environment(\.dismiss) var dismiss
     
     let formatter: NumberFormatter = {
@@ -33,11 +34,20 @@ struct NewLogView: View {
                 .keyboardType(.decimalPad)
             
             Button {
-                dismiss()
+                if activity == "" && carbonFootprint == 0 {
+                    isAlertPresent.toggle()
+                } else {
+                    let carbonLog = CarbonLog(name: activity, footprint: carbonFootprint)
+                    carbonLogs.append(carbonLog)
+                    dismiss()
+                }
             } label: {
                 Text("Add New Log")
             }
             .buttonStyle(.bordered)
+            .alert(isPresented: $isAlertPresent) {
+                Alert(title: Text("Error"), message: Text("Please ensure the values are not empty."), dismissButton: .cancel())
+            }
             
         }
     }
