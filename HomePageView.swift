@@ -13,6 +13,7 @@ struct HomePageView: View {
     @ObservedObject var carbonLogManager: CarbonLogManager
     @State var isSheetPresented = false
     
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -27,6 +28,7 @@ struct HomePageView: View {
                             
                         }
                         
+                        
                     }
                     .onDelete { indexSet in
                         carbonLogManager.carbonLogs.remove(atOffsets: indexSet)
@@ -34,8 +36,8 @@ struct HomePageView: View {
                     .onMove { originalOffset, newOffset in
                         carbonLogManager.carbonLogs.move(fromOffsets: originalOffset, toOffset: newOffset)
                     }
+
                 }
-                
                 
                 
             }
