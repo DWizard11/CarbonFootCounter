@@ -7,40 +7,39 @@
 
 import SwiftUI
 
+@available(iOS 16.0, *)
 struct LogView: View {
 
-    @Binding var carbonLog: CarbonLog
+    @Binding var carbonLog: [CarbonLog]
+    var logIndex: Int
     @ObservedObject var carbonLogManager: CarbonLogManager
+    @State var notes = ""
+    @FocusState var notesIsFocused: Bool
     
-    var log: CarbonLog {
-        get {
-            let carbonLogIndex = self.carbonLogManager.carbonLogs.firstIndex {
-                $0.id == carbonLog.id
-            }!
-            
-            return self.carbonLogManager.carbonLogs[carbonLogIndex]
-        }
-        set {
-            let carbonLogIndex = self.carbonLogManager.carbonLogs.firstIndex {
-                $0.id == carbonLog.id
-            }!
-            self.carbonLogManager.carbonLogs[carbonLogIndex] = newValue
-        }
-    }
-    
-    func setLog(log: CarbonLog) {
-        let carbonLogIndex = self.carbonLogManager.carbonLogs.firstIndex {
-            $0.id == carbonLog.id
-        }!
-        self.carbonLogManager.carbonLogs[carbonLogIndex] = log
-    }
     
     var body: some View {
-        VStack {
-            Text("Activity: \(carbonLog.name)")
-
+        Form {
+            VStack (alignment: .leading) {
+                Text("Activity: \(carbonLog[logIndex].name[logIndex])")
+                    .font(.title)
+                    .bold()
+                    .padding()
+                Text("Carbon Footprint: \(carbonLog[logIndex].footprint[logIndex])")
+                    .padding()
+                HStack {
+                    TextField("Add Notes", text: $carbonLog[logIndex].notes[logIndex], axis: .vertical)
+                        .focused($notesIsFocused)
+                        .font(.headline)
+                        .padding()
+                        
+                    Button("Done") {
+                        notesIsFocused = false
+                    }
+                }
+            }
         }
         
+        Spacer()
     }
 }
 

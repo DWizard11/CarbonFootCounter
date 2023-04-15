@@ -7,20 +7,15 @@
 
 import SwiftUI
 
+@available(iOS 16.0, *)
 struct SummaryView: View {
 
-    @ObservedObject var carbonFootManager: CarbonFootManager()
+    @ObservedObject var carbonLogManager: CarbonLogManager
 
     var body: some View {   
         NavigationStack {
             Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
         }
         .navigationTitle("Summary")
-    }
-}
-
-struct SummaryView_Previews: PreviewProvider {
-    static var previews: some View {
-        SummaryView()
     }
 }

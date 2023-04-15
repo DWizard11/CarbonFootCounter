@@ -12,7 +12,10 @@ struct NewLogView: View {
     @State var activity = ""
     @State var carbonFootprint = Int()
     @State var isAlertPresent = false
+    @ObservedObject var carbonLogManager: CarbonLogManager
     @Binding var carbonLogs: [CarbonLog]
+    var logIndex: Int
+    @State var currentDate: Date
     @Environment(\.dismiss) var dismiss
     
     let formatter: NumberFormatter = {
@@ -36,9 +39,15 @@ struct NewLogView: View {
             Button {
                 if activity == "" && carbonFootprint == 0 {
                     isAlertPresent.toggle()
-                } else {
-                    let carbonLog = CarbonLog(name: activity, footprint: carbonFootprint)
+                } else if logIndex == 0 {
+                    let carbonLog = CarbonLog(name: [], footprint: [], notes: [])
                     carbonLogs.append(carbonLog)
+                    carbonLogs[logIndex].name.insert(activity, at: 0)
+                    carbonLogs[logIndex].footprint.insert(carbonFootprint, at: 0)
+                    dismiss()
+                } else {
+                    carbonLogs[logIndex].name.append(activity)
+                    carbonLogs[logIndex].footprint.append(carbonFootprint)
                     dismiss()
                 }
             } label: {

@@ -6,61 +6,72 @@
 //
 
 import SwiftUI
+import Foundation
 
 @available(iOS 16.0, *)
 struct HomePageView: View {
     
     @ObservedObject var carbonLogManager: CarbonLogManager
     @State var isSheetPresented = false
-    
+    @State var currentDate = Date()
+    @State var logIndex = Int()
+    @State var subSubIndex = 0
     
     var body: some View {
         NavigationStack {
             VStack {
-                List {
-                    ForEach($carbonLogManager.carbonLogs) { $carbonLog in
+                ForEach($carbonLogManager.carbonLogs.indices, id: \.self) { carbonLogIndex in
+                    ForEach(carbonLogManager.carbonLogs[carbonLogIndex].name.indices, id: \.self) { subIndex in
                         NavigationLink {
-                            LogView(carbonLog: $carbonLog, carbonLogManager: carbonLogManager)
+                            LogView(carbonLog: $carbonLogManager.carbonLogs, logIndex: carbonLogIndex, carbonLogManager: carbonLogManager)
                         } label: {
-                            Text(carbonLog.name)
-                                .font(.headline)
-                                .padding()
+                            Text("\(carbonLogManager.carbonLogs[carbonLogIndex].name[subIndex])")
                             
+
                         }
-                        
-                        
+                        .onAppear {
+                            subSubIndex = subIndex
+                        }
                     }
-                    .onDelete { indexSet in
-                        carbonLogManager.carbonLogs.remove(atOffsets: indexSet)
+                    .onAppear {
+                        logIndex = carbonLogIndex
                     }
-                    .onMove { originalOffset, newOffset in
-                        carbonLogManager.carbonLogs.move(fromOffsets: originalOffset, toOffset: newOffset)
-                    }
-
                 }
                 
-                
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    EditButton()
+                .onDelete { indexSet in
+                    carbonLogManager.carbonLogs.remove(atOffsets: indexSet)
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button  {
-                        isSheetPresented.toggle()
-                    } label: {
-                        Image(systemName: "plus")
+                .onMove { originalOffset, newOffset in
+                    carbonLogManager.carbonLogs.move(fromOffsets: originalOffset, toOffset: newOffset)
+                }
+                
+                NavigationLink {
+                    EndDayView(carbonLogManager: carbonLogManager, carbonLog: carbonLogManager.carbonLogs)
+                } label: {
+                    Text("End Day")
+                }
+                
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        EditButton()
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button  {
+                            isSheetPresented.toggle()
+                        } label: {
+                            Image(systemName: "plus")
+                        }
                     }
                 }
+                .sheet(isPresented: $isSheetPresented) {
+                    NewLogView(carbonLogManager: carbonLogManager, carbonLogs: $carbonLogManager.carbonLogs, logIndex: logIndex, currentDate: Date())
+                }
+                
             }
-            .sheet(isPresented: $isSheetPresented) {
-                NewLogView(carbonLogs: $carbonLogManager.carbonLogs)
-            }
-
+            
+            
+            
         }
-        
-        
-        
     }
+    
 }
-

@@ -11,13 +11,13 @@ import SwiftUI
 @available(iOS 16.0, *)
 struct EndDayView: View { 
 
-    @ObservabedObject var carbonFootManager: CarbonFootManager()
-    @State var carbonLog: CarbonLog
+    @ObservedObject var carbonLogManager: CarbonLogManager
+    @State var carbonLog: [CarbonLog]
 
     var body: some View {
 
         NavigationStack { 
-             Text(carbonFootManager.carbonLogs)
+             Text("carbonLogManager.carbonLogs)")
         }
         .navigationTitle("Summary")
     }

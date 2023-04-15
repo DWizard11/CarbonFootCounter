@@ -9,8 +9,9 @@ import Foundation
 
 struct CarbonLog: Identifiable, Codable {
     var id = UUID()
-    var name: String
-    var footprint: Int
+    var name: [String]
+    var footprint: [Int]
+    var notes: [String]
 }
 
 class CarbonLogManager: ObservableObject {

@@ -11,7 +11,7 @@ struct ContentView: View {
                 .tabItem {
                     Label("Home", systemImage: "house.fill")
                 }
-            SummaryView()
+            SummaryView(carbonLogManager: carbonLogManager)
                 .tabItem {
                     Label("Summary", systemImage: "globe")
                 }
