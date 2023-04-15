@@ -47,7 +47,7 @@ struct NewLogView: View {
                 if activity == "" && carbonFootprint == 0 {
                     isAlertPresent.toggle()
                 } else if !alertShownOnce {
-                    let carbonLog = CarbonLog(name: [activity], footprint: [carbonFootprint], notes: [notes])
+                    let carbonLog = CarbonLog(name: [activity], footprint: [carbonFootprint], notes: [notes], date: currentDate)
                     carbonLogs.append(carbonLog)
                     print("HEHEHHEHAW")
                     print(carbonLogManager.carbonLogs)
