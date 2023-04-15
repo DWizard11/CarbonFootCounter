@@ -12,6 +12,7 @@ struct CarbonLog: Identifiable, Codable {
     var name: [String]
     var footprint: [Int]
     var notes: [String]
+    var date: Date
 }
 
 class CarbonLogManager: ObservableObject {

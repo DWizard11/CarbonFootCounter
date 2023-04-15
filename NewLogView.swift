@@ -7,14 +7,17 @@
 
 import SwiftUI
 
+@available(iOS 16.0, *)
 struct NewLogView: View {
     
     @State var activity = ""
     @State var carbonFootprint = Int()
+    @State var notes = ""
     @State var isAlertPresent = false
     @ObservedObject var carbonLogManager: CarbonLogManager
     @Binding var carbonLogs: [CarbonLog]
     var logIndex: Int
+    @AppStorage("shown") var alertShownOnce: Bool = false
     @State var currentDate: Date
     @Environment(\.dismiss) var dismiss
     
@@ -36,18 +39,24 @@ struct NewLogView: View {
                 .padding()
                 .keyboardType(.decimalPad)
             
+            TextField("Add Notes", text: $notes, axis: .vertical)
+                .font(.headline)
+                .padding()
+            
             Button {
                 if activity == "" && carbonFootprint == 0 {
                     isAlertPresent.toggle()
-                } else if logIndex == 0 {
-                    let carbonLog = CarbonLog(name: [], footprint: [], notes: [])
+                } else if !alertShownOnce {
+                    let carbonLog = CarbonLog(name: [activity], footprint: [carbonFootprint], notes: [notes])
                     carbonLogs.append(carbonLog)
-                    carbonLogs[logIndex].name.insert(activity, at: 0)
-                    carbonLogs[logIndex].footprint.insert(carbonFootprint, at: 0)
+                    print("HEHEHHEHAW")
+                    print(carbonLogManager.carbonLogs)
+                    alertShownOnce = true
                     dismiss()
                 } else {
                     carbonLogs[logIndex].name.append(activity)
                     carbonLogs[logIndex].footprint.append(carbonFootprint)
+                    carbonLogs[logIndex].notes.append(notes)
                     dismiss()
                 }
             } label: {

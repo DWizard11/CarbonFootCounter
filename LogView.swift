@@ -12,6 +12,7 @@ struct LogView: View {
 
     @Binding var carbonLog: [CarbonLog]
     var logIndex: Int
+    var subIndex: Int
     @ObservedObject var carbonLogManager: CarbonLogManager
     @State var notes = ""
     @FocusState var notesIsFocused: Bool
@@ -20,14 +21,14 @@ struct LogView: View {
     var body: some View {
         Form {
             VStack (alignment: .leading) {
-                Text("Activity: \(carbonLog[logIndex].name[logIndex])")
+                Text("Activity: \(carbonLog[logIndex].name[subIndex])")
                     .font(.title)
                     .bold()
                     .padding()
-                Text("Carbon Footprint: \(carbonLog[logIndex].footprint[logIndex])")
+                Text("Carbon Footprint: \(carbonLog[logIndex].footprint[subIndex])")
                     .padding()
                 HStack {
-                    TextField("Add Notes", text: $carbonLog[logIndex].notes[logIndex], axis: .vertical)
+                    TextField("Add Notes", text: $carbonLog[logIndex].notes[subIndex], axis: .vertical)
                         .focused($notesIsFocused)
                         .font(.headline)
                         .padding()
