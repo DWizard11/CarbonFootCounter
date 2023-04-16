@@ -50,17 +50,15 @@ struct HomePageView: View {
                 }
                 List {
                     ForEach (carbonLogManager.carbonLogs.filter({ $0.date.isSameDay(as: currentDate) })) { log in
-                        if isTrue {
-                            carbonLogIndex = carbonLogManager.carbonLogs.firstIndex(of: log)!
-                        }
-                        ForEach(carbonLogManager.carbonLogs[carbonLogIndex].name.indices, id: \.self) { subIndex in
+                        ForEach(carbonLogManager.carbonLogs[carbonLogManager.carbonLogs.firstIndex(of: log)!].name.indices, id: \.self) { subIndex in
                             NavigationLink {
-                                LogView(carbonLog: $carbonLogManager.carbonLogs, logIndex: carbonLogIndex, subIndex: subIndex, carbonLogManager: carbonLogManager)
+                                LogView(carbonLog: $carbonLogManager.carbonLogs, logIndex: carbonLogManager.carbonLogs.firstIndex(of: log)!, subIndex: subIndex, carbonLogManager: carbonLogManager)
                             } label: {
-                                Text("\(carbonLogManager.carbonLogs[carbonLogIndex].name[subIndex])")
+                                Text("\(carbonLogManager.carbonLogs[carbonLogManager.carbonLogs.firstIndex(of: log)!].name[subIndex])")
                                     .padding()
                                     .onAppear {
-                                        self.logIndex = logIndex
+                                        self.logIndex = carbonLogManager.carbonLogs.firstIndex(of: log)!
+                                        print(carbonLogManager.carbonLogs.firstIndex(of: log)!)
                                         
                                     }
                             }
@@ -75,18 +73,19 @@ struct HomePageView: View {
                             
                         }
                         
-                        .onDelete { indexSet in
-                            carbonLogManager.carbonLogs[logIndex].name.remove(atOffsets: indexSet)
-                            carbonLogManager.carbonLogs[logIndex].footprint.remove(atOffsets: indexSet)
-                            carbonLogManager.carbonLogs[logIndex].notes.remove(atOffsets: indexSet)
-                            
-                        }
-                        .onMove { originalOffset, newOffset in
-                            carbonLogManager.carbonLogs[logIndex].name.move(fromOffsets: originalOffset, toOffset: newOffset)
-                            carbonLogManager.carbonLogs[logIndex].footprint.move(fromOffsets: originalOffset, toOffset: newOffset)
-                            carbonLogManager.carbonLogs[logIndex].notes.move(fromOffsets: originalOffset, toOffset: newOffset)
-                            
-                        }
+                   
+                        
+                    }
+                    .onDelete { indexSet in
+                        carbonLogManager.carbonLogs[logIndex].name.remove(atOffsets: indexSet)
+                        carbonLogManager.carbonLogs[logIndex].footprint.remove(atOffsets: indexSet)
+                        carbonLogManager.carbonLogs[logIndex].notes.remove(atOffsets: indexSet)
+                        
+                    }
+                    .onMove { originalOffset, newOffset in
+                        carbonLogManager.carbonLogs[logIndex].name.move(fromOffsets: originalOffset, toOffset: newOffset)
+                        carbonLogManager.carbonLogs[logIndex].footprint.move(fromOffsets: originalOffset, toOffset: newOffset)
+                        carbonLogManager.carbonLogs[logIndex].notes.move(fromOffsets: originalOffset, toOffset: newOffset)
                         
                     }
                     
