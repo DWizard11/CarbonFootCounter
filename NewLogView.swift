@@ -22,11 +22,11 @@ struct NewLogView: View {
     @Environment(\.dismiss) var dismiss
     
     let formatter: NumberFormatter = {
-            let formatter = NumberFormatter()
-            formatter.numberStyle = .decimal
-            return formatter
-        }()
-
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter
+    }()
+    
     var body: some View {
         VStack {
             TextField("Activity", text: $activity)
@@ -46,17 +46,22 @@ struct NewLogView: View {
             Button {
                 if activity == "" && carbonFootprint == 0 {
                     isAlertPresent.toggle()
-                } else if !alertShownOnce {
-                    let carbonLog = CarbonLog(name: [activity], footprint: [carbonFootprint], notes: [notes], date: currentDate)
-                    carbonLogs.append(carbonLog)
+                } else if !alertShownOnce || carbonLogManager.carbonLogs.contains(where: { $0.date.isSameDay(as: currentDate) }) || currentDate != Date() {
+                    print("THIRD HERE \(currentDate)")
+                    let carbonLog = CarbonLog(name: [activity], footprint: [carbonFootprint], notes: [notes], date: currentDate, totalFootPrint: 0)
+                    print("HSAHHAHAHAHAH")
+                    print(carbonLog)
+                    carbonLogManager.carbonLogs.append(carbonLog)
                     print("HEHEHHEHAW")
                     print(carbonLogManager.carbonLogs)
-                    alertShownOnce = true
+                    alertShownOnce.toggle()
                     dismiss()
                 } else {
                     carbonLogs[logIndex].name.append(activity)
                     carbonLogs[logIndex].footprint.append(carbonFootprint)
                     carbonLogs[logIndex].notes.append(notes)
+                    print(alertShownOnce)
+                    print(carbonLogManager.carbonLogs)
                     dismiss()
                 }
             } label: {
@@ -68,7 +73,11 @@ struct NewLogView: View {
             }
             
         }
+        .onAppear {
+            print("OTHER HERE \(currentDate)")
+        }
     }
 }
+
 
 

@@ -13,12 +13,12 @@ struct EndDayView: View {
 
     @ObservedObject var carbonLogManager: CarbonLogManager
     @State var carbonLog: [CarbonLog]
+    var logIndex: Int
 
     var body: some View {
-
-        NavigationStack { 
-             Text("carbonLogManager.carbonLogs)")
-        }
-        .navigationTitle("Summary")
+        Text("Your total calculated Carbon Footprint of the day is \(carbonLogManager.carbonLogs[logIndex].totalFootPrint)")
+            .onAppear {
+                carbonLogManager.carbonLogs[logIndex].totalFootPrint = carbonLogManager.carbonLogs[logIndex].footprint.reduce(0, { $0 + $1 })
+            }
     }
 }

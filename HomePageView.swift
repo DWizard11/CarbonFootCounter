@@ -22,61 +22,86 @@ struct HomePageView: View {
     @State var logIndex = Int()
     @State var subSubIndex = Int()
     @State var currentDate = Date()
+    @State var isEndSheetPresented = false
+    @State var carbonLogIndex = 0
+    var isTrue = true
     
     var body: some View {
         NavigationStack {
             VStack {
-                VStack {
+                HStack {
+                    Button {
+                        currentDate = Calendar.current.date(byAdding: .day, value: -1, to: currentDate)!
+                    } label: {
+                        Text("< Previous Day")
+                            .padding()
+                    }
+                    Spacer()
                     Text("Today is \(dateFormatter.string(from: currentDate))")
-                    List {
-                        ForEach (carbonLogManager.carbonLogs.filter({ $0.date.isSameDay(as: currentDate) })) { log in
-                            ForEach($carbonLogManager.carbonLogs.indices, id: \.self) { carbonLogIndex in
-                                ForEach(carbonLogManager.carbonLogs[carbonLogIndex].name.indices, id: \.self) { subIndex in
-                                    NavigationLink {
-                                        LogView(carbonLog: $carbonLogManager.carbonLogs, logIndex: carbonLogIndex, subIndex: subIndex, carbonLogManager: carbonLogManager)
-                                    } label: {
-                                        Text("\(carbonLogManager.carbonLogs[carbonLogIndex].name[subIndex])")
-                                            .padding()
-                                            .onTapGesture {
-                                                self.logIndex = logIndex
-                                            }
+                    Spacer()
+                    Button {
+                        currentDate = Calendar.current.date(byAdding: .day, value: 1, to: currentDate)!
+                        print(currentDate)
+                    } label: {
+                        Text("Next Day >")
+                            .padding()
+                        
+                    }
+                }
+                List {
+                    ForEach (carbonLogManager.carbonLogs.filter({ $0.date.isSameDay(as: currentDate) })) { log in
+                        if isTrue {
+                            carbonLogIndex = carbonLogManager.carbonLogs.firstIndex(of: log)!
+                        }
+                        ForEach(carbonLogManager.carbonLogs[carbonLogIndex].name.indices, id: \.self) { subIndex in
+                            NavigationLink {
+                                LogView(carbonLog: $carbonLogManager.carbonLogs, logIndex: carbonLogIndex, subIndex: subIndex, carbonLogManager: carbonLogManager)
+                            } label: {
+                                Text("\(carbonLogManager.carbonLogs[carbonLogIndex].name[subIndex])")
+                                    .padding()
+                                    .onAppear {
+                                        self.logIndex = logIndex
+                                        
                                     }
-                                }
-                                .onAppear {
-                                    print(carbonLogManager.carbonLogs)
-                                    print(logIndex)
-                                }
                             }
-                            .onDelete { indexSet in
-                                carbonLogManager.carbonLogs[logIndex].name.remove(atOffsets: indexSet)
-                                carbonLogManager.carbonLogs[logIndex].footprint.remove(atOffsets: indexSet)
-                                carbonLogManager.carbonLogs[logIndex].notes.remove(atOffsets: indexSet)
-                                
-                            }
-                            .onMove { originalOffset, newOffset in
-                                carbonLogManager.carbonLogs[logIndex].name.move(fromOffsets: originalOffset, toOffset: newOffset)
-                                carbonLogManager.carbonLogs[logIndex].footprint.move(fromOffsets: originalOffset, toOffset: newOffset)
-                                carbonLogManager.carbonLogs[logIndex].notes.move(fromOffsets: originalOffset, toOffset: newOffset)
-                                
-                            }
+                            .padding()
+                        }
+                        .onAppear {
+                            print(carbonLogManager.carbonLogs)
+                            print(logIndex)
+                            print("DATES")
+                            print(currentDate)
+                            print(carbonLogManager.carbonLogs[carbonLogIndex].date)
+                            
+                        }
+                        
+                        .onDelete { indexSet in
+                            carbonLogManager.carbonLogs[logIndex].name.remove(atOffsets: indexSet)
+                            carbonLogManager.carbonLogs[logIndex].footprint.remove(atOffsets: indexSet)
+                            carbonLogManager.carbonLogs[logIndex].notes.remove(atOffsets: indexSet)
+                            
+                        }
+                        .onMove { originalOffset, newOffset in
+                            carbonLogManager.carbonLogs[logIndex].name.move(fromOffsets: originalOffset, toOffset: newOffset)
+                            carbonLogManager.carbonLogs[logIndex].footprint.move(fromOffsets: originalOffset, toOffset: newOffset)
+                            carbonLogManager.carbonLogs[logIndex].notes.move(fromOffsets: originalOffset, toOffset: newOffset)
                             
                         }
                         
                     }
-                    Button("Next Day") {
-                        currentDate = currentDate.addingTimeInterval(86400)
-                    }
-                    Button("Previous Day") {
-                        currentDate = currentDate.addingTimeInterval(-86400)
-                    }
-                    NavigationLink {
-                        EndDayView(carbonLogManager: carbonLogManager, carbonLog: carbonLogManager.carbonLogs)
-                    } label: {
-                        Text("End Day")
-                    }
                     
                     
                 }
+                
+                
+                Button {
+                    isEndSheetPresented.toggle()
+                } label : {
+                    Text("End Day")
+                        .padding()
+                }
+            }
+            Divider()
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         EditButton()
@@ -84,16 +109,24 @@ struct HomePageView: View {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button  {
                             isSheetPresented.toggle()
+                            print(currentDate)
                         } label: {
                             Image(systemName: "plus")
                         }
                     }
                 }
-
-            }
-            .sheet(isPresented: $isSheetPresented) {
-                NewLogView(carbonLogManager: carbonLogManager, carbonLogs: $carbonLogManager.carbonLogs, logIndex: logIndex, currentDate: currentDate)
-            }
+            
+            
+                .sheet(isPresented: $isSheetPresented) {
+                    NewLogView(carbonLogManager: carbonLogManager, carbonLogs: $carbonLogManager.carbonLogs, logIndex: logIndex, currentDate: currentDate)
+                        .onAppear {
+                            print("HERE \(currentDate)")
+                        }
+                }
+                .sheet(isPresented: $isEndSheetPresented) {
+                    EndDayView(carbonLogManager: carbonLogManager, carbonLog: carbonLogManager.carbonLogs, logIndex: logIndex)
+                }
+            
             
         }
         
@@ -116,4 +149,11 @@ extension Date {
     }
 }
 
-    
+
+extension CarbonLog: Equatable {
+    static func == (lhs: CarbonLog, rhs: CarbonLog) -> Bool {
+        return lhs.date == rhs.date
+    }
+}
+//                         carbonLogIndex = carbonLogManager.carbonLogs.enumerated().first(where: { $0.element == log })!.offset
+
