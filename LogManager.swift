@@ -10,10 +10,10 @@ import Foundation
 struct CarbonLog: Identifiable, Codable {
     var id = UUID()
     var name: [String]
-    var footprint: [Int]
+    var footprint: [Double]
     var notes: [String]
     var date: Date
-    var totalFootPrint: Int 
+    var totalFootPrint: Double
 }
 
 class CarbonLogManager: ObservableObject {
