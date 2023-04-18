@@ -9,11 +9,11 @@ struct ContentView: View {
         TabView {
             HomePageView(carbonLogManager: carbonLogManager)
                 .tabItem {
-                    Label("Home", systemImage: "house.fill")
+                    Label("Logs", systemImage: "newspaper.fill")
                 }
             SummaryView(carbonLogManager: carbonLogManager)
                 .tabItem {
-                    Label("Summary", systemImage: "globe")
+                    Label("Help", systemImage: "globe")
                 }
         }
     }

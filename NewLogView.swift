@@ -60,7 +60,8 @@ struct NewLogView: View {
             Button {
                 if activity == "" && carbonFootprint == 0 {
                     isAlertPresent.toggle()
-                } else if !alertShownOnce || carbonLogManager.carbonLogs.contains(where: { $0.date.isSameDay(as: currentDate) }) || !(currentDate.isSameDay(as: Date())) {
+                } else if !alertShownOnce || !(carbonLogManager.carbonLogs.contains(where: { $0.date.isSameDay(as: currentDate) })) || currentDate.isSameDay(as: Date()) {
+                    print("TRUE: \(currentDate.isSameDay(as: Date()))")
                     print("THIRD HERE \(currentDate)")
                     let carbonLog = CarbonLog(name: [activity], footprint: [carbonFootprint], notes: [notes], date: currentDate, totalFootPrint: 0.0)
                     print("HSAHHAHAHAHAH")
@@ -68,7 +69,7 @@ struct NewLogView: View {
                     carbonLogManager.carbonLogs.append(carbonLog)
                     print("HEHEHHEHAW")
                     print(carbonLogManager.carbonLogs)
-                    alertShownOnce.toggle()
+                    alertShownOnce = true
                     dismiss()
                 } else {
                     carbonLogs[logIndex].name.append(activity)
