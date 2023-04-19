@@ -12,7 +12,7 @@ import Combine
 struct NewLogView: View {
     
     @State var activity = ""
-    @State var carbonFootprint = 7.2
+    @State var carbonFootprint = Double()
     @State var notes = ""
     @State var isAlertPresent = false
     @ObservedObject var carbonLogManager: CarbonLogManager
@@ -36,22 +36,16 @@ struct NewLogView: View {
                 .font(.headline)
                 .textFieldStyle(.roundedBorder)
                 .padding()
+            
             HStack {
-                Picker(selection: $selectedFootPrint) {
-                    ForEach(Array(logActivities.keys), id: \.self) { key in
-                        Text(key).tag(key)
-                    }
-                } label: {
-                    Text("Select An Activity")
-                }
-                .pickerStyle(DefaultPickerStyle())
-                .onReceive(Just(selectedFootPrint)) { value in
-                    if let newValue = logActivities[value] {
-                        carbonFootprint = newValue
-                    }
-                }
-                Text("\(carbonFootprint)")
+                Text("Carbon Footprint: ")
+                    .padding()
+                TextField("Carbon Footprint (in kg)", value: $carbonFootprint, formatter: formatter)
+                    .textFieldStyle(.roundedBorder)
+                    .padding()
+                    .keyboardType(.decimalPad)
             }
+            
             
             TextField("Add Notes", text: $notes, axis: .vertical)
                 .font(.headline)
@@ -98,30 +92,30 @@ struct NewLogView: View {
 
 
 /*
-VStack {
-    Picker(selection: $selectedText) {
-        ForEach(Array(logActivities.keys), id: \.self) { key in
-            Text(key).tag(key)
-        }
-    } label: {
-        Text("Select A Topic")
-    }
-    .pickerStyle(DefaultPickerStyle())
-    
-    Picker(selection: $selectedOption) {
-        ForEach(Array(logActivities[selectedText]?.keys.sorted() ?? []), id: \.self) { value in
-            Text(value).tag(value)
-        }
-    } label: {
-        Text("Select An Activity")
-    }
-    .pickerStyle(DefaultPickerStyle())
-}
-.onReceive(Just(selectedOption)) { subValue in
-    if let nestedDict = logActivities[selectedText], let newValue = nestedDict[subValue] {
-        carbonFootprint = newValue
-        print("HEREEEE")
-        print(carbonFootprint)
-    }
-}
-*/
+ VStack {
+ Picker(selection: $selectedText) {
+ ForEach(Array(logActivities.keys), id: \.self) { key in
+ Text(key).tag(key)
+ }
+ } label: {
+ Text("Select A Topic")
+ }
+ .pickerStyle(DefaultPickerStyle())
+ 
+ Picker(selection: $selectedOption) {
+ ForEach(Array(logActivities[selectedText]?.keys.sorted() ?? []), id: \.self) { value in
+ Text(value).tag(value)
+ }
+ } label: {
+ Text("Select An Activity")
+ }
+ .pickerStyle(DefaultPickerStyle())
+ }
+ .onReceive(Just(selectedOption)) { subValue in
+ if let nestedDict = logActivities[selectedText], let newValue = nestedDict[subValue] {
+ carbonFootprint = newValue
+ print("HEREEEE")
+ print(carbonFootprint)
+ }
+ }
+ */

@@ -23,6 +23,7 @@ struct HomePageView: View {
     @State var subSubIndex = Int()
     @State var currentDate = Date()
     @State var isEndSheetPresented = false
+    @State var isLogEmpty = false 
     @State var carbonLogIndex = 0
     @State var searchText = ""
     var isTrue = true
@@ -40,99 +41,112 @@ struct HomePageView: View {
                     } label: {
                         Text("< Previous Day")
                             .padding()
+                            .foregroundColor(.white)
                     }
                     Spacer()
                     Text("Current Date: \(dateFormatter.string(from: currentDate))")
+                        .foregroundColor(.white)
                     Spacer()
                     Button {
                         currentDate = Calendar.current.date(byAdding: .day, value: 1, to: currentDate)!
                         print(currentDate)
                     } label: {
                         Text("Next Day >")
-                           
+                            .padding()
+                            .foregroundColor(.white)
                         
                     }
                 }
                 .background(Color(otherColor))
-                TextField(text: $searchText) {
-                    Text("Search")
-                        .padding(.horizontal)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(10)
-                        .padding(.horizontal)
-                }
-                List {
-                    ForEach (carbonLogManager.carbonLogs.filter({ $0.date.isSameDay(as: currentDate) })) { log in
-                        ForEach(carbonLogManager.carbonLogs[carbonLogManager.carbonLogs.firstIndex(of: log)!].name.indices, id: \.self) { subIndex in
-                            if searchText.isEmpty ? true : "\(log)".lowercased().contains(self.searchText.lowercased()) {
-                                NavigationLink {
-                                LogView(carbonLog: $carbonLogManager.carbonLogs, logIndex: carbonLogManager.carbonLogs.firstIndex(of: log)!, subIndex: subIndex, carbonLogManager: carbonLogManager)
-                            } label: {
-                                Text("\(carbonLogManager.carbonLogs[carbonLogManager.carbonLogs.firstIndex(of: log)!].name[subIndex])")
-                                    .padding()
-                                    .onAppear {
-                                        self.logIndex = carbonLogManager.carbonLogs.firstIndex(of: log)!
-                                        print("HHHHHH")
-                                        print(currentDate)
-                                        
+                //                TextField(text: $searchText) {
+                //                    Text("Search")
+                //                        .padding(.horizontal)
+                //                        .padding()
+                //                        .background(Color(.systemGray6))
+                //                        .cornerRadius(10)
+                //                        .padding(.horizontal)
+                //                }
+                if carbonLogManager.carbonLogs.isEmpty {
+                    Spacer()
+                    Text("Click the Plus Button on the top to add a Carbon Log!")
+                    Spacer()
+                } else {
+                    List {
+                        ForEach (carbonLogManager.carbonLogs.filter({ $0.date.isSameDay(as: currentDate) })) { log in
+                            ForEach(carbonLogManager.carbonLogs[carbonLogManager.carbonLogs.firstIndex(of: log)!].name.indices, id: \.self) { subIndex in
+                                if searchText.isEmpty ? true : "\(log)".lowercased().contains(self.searchText.lowercased()) {
+                                    NavigationLink {
+                                        LogView(carbonLog: $carbonLogManager.carbonLogs, logIndex: carbonLogManager.carbonLogs.firstIndex(of: log)!, subIndex: subIndex, carbonLogManager: carbonLogManager)
+                                    } label: {
+                                        Text("\(carbonLogManager.carbonLogs[carbonLogManager.carbonLogs.firstIndex(of: log)!].name[subIndex])")
+                                            .padding()
+                                            .onAppear {
+                                                self.logIndex = carbonLogManager.carbonLogs.firstIndex(of: log)!
+                                                print("HHHHHH")
+                                                print(currentDate)
+                                                
+                                            }
                                     }
+                                    .padding(.horizontal)
+                                }
                             }
-                            .padding(.horizontal)
-                        }
-                        }
-                        .onAppear {
-                            print(carbonLogManager.carbonLogs)
-                            print(logIndex)
-                            print("DATES")
-                            print(currentDate)
-                            print(carbonLogManager.carbonLogs[carbonLogIndex].date)
+                            .onAppear {
+                                print(carbonLogManager.carbonLogs)
+                                print(logIndex)
+                                print("DATES")
+                                print(currentDate)
+                                print(carbonLogManager.carbonLogs[carbonLogIndex].date)
+                                
+                            }
+                            
+                            
                             
                         }
-                        
+                        .onDelete { indexSet in
+                            carbonLogManager.carbonLogs[logIndex].name.remove(atOffsets: indexSet)
+                            carbonLogManager.carbonLogs[logIndex].footprint.remove(atOffsets: indexSet)
+                            carbonLogManager.carbonLogs[logIndex].notes.remove(atOffsets: indexSet)
+                            
+                        }
+                        .onMove { originalOffset, newOffset in
+                            carbonLogManager.carbonLogs[logIndex].name.move(fromOffsets: originalOffset, toOffset: newOffset)
+                            carbonLogManager.carbonLogs[logIndex].footprint.move(fromOffsets: originalOffset, toOffset: newOffset)
+                            carbonLogManager.carbonLogs[logIndex].notes.move(fromOffsets: originalOffset, toOffset: newOffset)
+                            
+                        }
+                        .background(RoundedRectangle(cornerRadius: 12).fill(.white))
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                        .shadow(radius: 0.1)
                         
                         
                     }
-                    .onDelete { indexSet in
-                        carbonLogManager.carbonLogs[logIndex].name.remove(atOffsets: indexSet)
-                        carbonLogManager.carbonLogs[logIndex].footprint.remove(atOffsets: indexSet)
-                        carbonLogManager.carbonLogs[logIndex].notes.remove(atOffsets: indexSet)
-                        
+                    .listStyle(.insetGrouped)
+                    .onAppear {
+                        print(currentDate)
                     }
-                    .onMove { originalOffset, newOffset in
-                        carbonLogManager.carbonLogs[logIndex].name.move(fromOffsets: originalOffset, toOffset: newOffset)
-                        carbonLogManager.carbonLogs[logIndex].footprint.move(fromOffsets: originalOffset, toOffset: newOffset)
-                        carbonLogManager.carbonLogs[logIndex].notes.move(fromOffsets: originalOffset, toOffset: newOffset)
-                        
-                    }
-                    .background(RoundedRectangle(cornerRadius: 12).fill(.white))
-                    .listRowBackground(Color.clear)
-                    .listRowSeparator(.hidden)
-                    .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-                    .shadow(radius: 0.1)
                     
-                    
-                }
-                .listStyle(.insetGrouped)
-                .onAppear {
-                    print(currentDate)
-                }
-                
-                
-                Button {
-                    isEndSheetPresented.toggle()
-                } label : {
-                    Text("End Day")
+                    if !carbonLogManager.carbonLogs.isEmpty {
+                        Button {
+                            isEndSheetPresented.toggle()
+                        } label : {
+                            Text("Summarise Day")
+                                .padding()
+                                .background(Color(otherColor))
+                                .cornerRadius(10)
+                                .foregroundColor(.white)
+                        }
                         .padding()
-                        .background(Color(otherColor))
-                        .cornerRadius(10)
+                    }
                 }
-                .padding()
             }
+            .searchable(text: $searchText, placement: .navigationBarDrawer)
             
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     EditButton()
+                        .foregroundColor(.white)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button  {
@@ -140,6 +154,7 @@ struct HomePageView: View {
                         print(currentDate)
                     } label: {
                         Image(systemName: "plus")
+                            .foregroundColor(.white)
                     }
                 }
             }
@@ -157,6 +172,7 @@ struct HomePageView: View {
             
             
         }
+
         .onAppear {
             print("ON LAUNCH \(currentDate)")
         }
@@ -202,5 +218,12 @@ extension UIColor {
             green: (rgb >> 8) & 0xFF,
             blue: rgb & 0xFF
         )
+    }
+}
+struct MyOpacityModifier: ViewModifier {
+    var opacity: Double
+
+    func body(content: Content) -> some View {
+        content.opacity(opacity)
     }
 }

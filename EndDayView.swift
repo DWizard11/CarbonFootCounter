@@ -15,11 +15,6 @@ struct EndDayView: View {
     @State var carbonLog: [CarbonLog]
     @State var averageLog = 732.9
     @State var percentageLog = 0.0
-    @State var precautions = [
-        "Switch off the Lights when not in use",
-        "Keep Air-Conditioner at Low Temperatures",
-        "Lower the amount of Plugs in one socket",
-    ]
     let mainColor = UIColor(red: 58, green: 124, blue: 85)
     let otherColor = UIColor(red: 67, green: 142, blue: 119)
     @Environment(\.dismiss) var dismiss
@@ -33,29 +28,25 @@ struct EndDayView: View {
                     carbonLogManager.carbonLogs[logIndex].totalFootPrint = carbonLogManager.carbonLogs[logIndex].footprint.reduce(0, { $0 + $1 })
                     percentageLog = (carbonLogManager.carbonLogs[logIndex].totalFootPrint / averageLog) * 100
                 }
-            Text("Compared to the Singaporean Average of \(averageLog.removeZerosFromEnd()) kg, you have used \(carbonLogManager.carbonLogs[logIndex].totalFootPrint.removeZerosFromEnd())")
+            Text("You have used \(percentageLog.rounded().removeZerosFromEnd())% of the Singaporean Average Carbon Footprint of \(averageLog.removeZerosFromEnd()) kg")
             if carbonLogManager.carbonLogs[logIndex].totalFootPrint < averageLog {
-                Text("You've used less than the Singaporean Average. Great Job!")
+                Text("You've used less than the Singaporean Average. Keep it up!")
             } else {
                 Text("You have used \((carbonLogManager.carbonLogs[logIndex].totalFootPrint - averageLog).removeZerosFromEnd()) kg more than the Singaporean Average.")
             }
-            Text("Precautions that you should take to reduce your carbon emmission: ")
-                .padding()
-                .font(.title)
-            VStack {
-                ForEach(precautions, id: \.self) { precaution in
-                    Text(precaution.capitalized)
-                        
-                }
+            if carbonLogManager.carbonLogs[logIndex].totalFootPrint > 1000.0 {
+                Text("If every Singaporean were to have released \(carbonLogManager.carbonLogs[logIndex].totalFootPrint.removeZerosFromEnd()) kg of carbon footprint, we would be living in an extremely hot environment with major air pollution. ")
+                    .multilineTextAlignment(.center)
+                    .padding(.leading)
             }
-            
             Button {
                 dismiss()
             } label: {
-                Text("Dismiss Day")
+                Text("Dismiss Summary")
                     .padding()
                     .background(Color(otherColor))
                     .cornerRadius(12)
+                    .foregroundColor(.white)
             }
             .padding()
         }

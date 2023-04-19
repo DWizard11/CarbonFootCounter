@@ -12,14 +12,16 @@ struct SummaryView: View {
     
     @ObservedObject var carbonLogManager: CarbonLogManager
     @State var precautions = [
-        "Switch off the Lights when not in use",
-        "Keep Air-Conditioner at Low Temperatures",
-        "Lower the amount of Plugs in one socket",
+        "Switch off the lights when not in use",
+        "Keep air-conditioner at higher temperatures, or just use a fan",
+        "Limit the use of air travel",
         "Unplug appliances that are not in use",
         "Turn off electrical devices when not in use",
         "Take shorter showers",
         "Take the public transport or consider walking instead of using a car",
-        "Use LED Lights instead"
+        "Use LED Lights instead",
+        "Air-dry your clothes instead of using a clothes dryer",
+        "Make use of natural light as much as possible"
     ]
     let mainColor = UIColor(red: 58, green: 124, blue: 85)
     let otherColor = UIColor(red: 67, green: 142, blue: 119)
@@ -28,7 +30,7 @@ struct SummaryView: View {
         NavigationStack {
             ZStack {
                 Color(otherColor)
-
+                    .edgesIgnoringSafeArea(.top)
                 VStack {
                     Text("How to Reduce Carbon Footprint: ")
                         .padding()
@@ -36,7 +38,7 @@ struct SummaryView: View {
                     VStack {
                         List {
                             ForEach(precautions, id: \.self) { precaution in
-                                Text(precaution.capitalized)
+                                Text(precaution)
                                     .padding()
                             }
                             .background(RoundedRectangle(cornerRadius: 12).fill(.white))
